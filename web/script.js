@@ -86,7 +86,7 @@ async function handleThemeToggle() {
     if (themeToggle) {
         const newTheme = themeToggle.checked ? 'dark' : 'light';
         applyThemeAndToggle(newTheme); // Update visuals immediately
-        await saveThemePreference(newTheme); // Save the new preference via backend (use await)
+        await saveThemePreference(newTheme);
     } else {
         console.error("Theme toggle element not found in handleThemeToggle");
     }
@@ -128,7 +128,6 @@ async function waitForPywebview(timeoutMs = 5000) {
     return true;
 }
 async function callPython(funcName, ...args) {
-    // No need to call waitForPywebview here, assume ensureInitialData or the calling context did it.
     // Direct check before call:
     if (!window.pywebview?.api?.[funcName] || typeof window.pywebview.api[funcName] !== 'function') {
         const errorMsg = `Python function '${funcName}' not available.`;
@@ -339,7 +338,6 @@ async function handleExportExcel() {
     else { if (!result?.error) { showToast('Export failed. Check logs.', 'error'); } } // Error toast shown by callPython
 }
 
-// --- App Initialization (REVISED for DB theme storage) ---
 async function initializeApp() {
     console.log("DOM Loaded. Initializing App...");
 
@@ -389,8 +387,7 @@ async function initializeApp() {
     } catch (error) {
         // Catches errors from waitForPywebview, get_theme_preference, ensureInitialData
         console.error("Initialization failed:", error);
-        // Toast was likely shown already by the failing function
-        applyThemeAndToggle('light'); // Fallback to light theme visually
+        applyThemeAndToggle('light'); 
         switchView('dashboard'); // Attempt to show dashboard
     } finally {
         // Hide loading indicator AFTER setup attempt
@@ -398,8 +395,6 @@ async function initializeApp() {
     }
     console.log("App Initialization sequence finished.");
 }
-// --- END App Initialization ---
-
 // --- Global Event Listeners ---
 document.addEventListener('DOMContentLoaded', initializeApp);
 window.addEventListener('pywebviewready', () => { console.log('Event: pywebviewready received.'); });

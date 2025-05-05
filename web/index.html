@@ -9,27 +9,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
-    <!-- Toastify CSS (Add this) -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <!-- Or link to local file: <link rel="stylesheet" href="path/to/toastify.min.css"> -->
 
-    <!-- Your Custom CSS -->
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* Basic styling for loading state */
+
         .loading-overlay {
-            position: fixed; /* Cover the whole screen */
+            position: fixed; 
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            background-color: rgba(255, 255, 255, 0.8); 
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* Ensure it's on top */
+            z-index: 9999;
             font-size: 1.5rem;
             color: #333;
         }
@@ -40,7 +36,6 @@
 
 </head>
 <body>
-    <!-- Optional: Loading Overlay -->
     <div id="loading-indicator" class="loading-overlay">
         <span class="material-symbols-outlined" style="font-size: 2em; margin-right: 10px;">hourglass_top</span>
         Loading Application...
@@ -113,12 +108,11 @@
                 <div class="filter-bar">
                     <label for="account-filter">Account:</label>
                     <select id="account-filter"> <option value="null">All Accounts</option> </select>
-                    <!-- Add more filters later (date range, category, etc.) -->
                 </div>
                 <div class="table-container">
                     <div class="table-header">
                         <div class="th col-date">Date</div>
-                        <div class="th col-account">Account</div> <!-- Added Account column -->
+                        <div class="th col-account">Account</div>
                         <div class="th col-desc">Description</div>
                         <div class="th col-cat">Category</div>
                         <div class="th col-amount">Amount</div>
@@ -150,7 +144,7 @@
                      <h2>Budget Overview</h2>
                      <div class="budget-month-selector">
                          <label for="budget-month">Month:</label>
-                         <input type="month" id="budget-month"> <!-- YYYY-MM format -->
+                         <input type="month" id="budget-month"> 
                      </div>
                  </div>
                  <div class="table-container budget-table">
@@ -183,12 +177,10 @@
                     <div class="card report-card">
                         <h3 class="card-header">Spending by Category</h3>
                         <div class="chart-container" id="spending-chart-container">
-                            <!-- Canvas will be here, placeholder text initially -->
                              <canvas id="spending-pie-chart" style="display: none;"></canvas>
                              <p class="placeholder-text" id="report-placeholder">Select dates and run report.</p>
                         </div>
                     </div>
-                     <!-- Add more report cards here later -->
                 </div>
             </div>
 
@@ -222,7 +214,6 @@
             </div>
         </section>
 
-         <!-- Data Management Section (Optional - kept placeholders) -->
         <section class="settings-section">
             <h3>Data Management (Future)</h3>
             <div class="settings-options">
@@ -244,7 +235,6 @@
      <div id="edit-account-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('edit-account-modal')" aria-label="Close">×</button> <h3>Edit Account</h3> <form id="edit-account-form" novalidate> <input type="hidden" id="edit-acc-id"> <div class="form-group"> <label for="edit-acc-name">Account Name:</label> <input type="text" id="edit-acc-name" required maxlength="100"> </div> <div class="form-group"> <label for="edit-acc-balance">Initial Balance:</label> <input type="text" id="edit-acc-balance" placeholder="0.00" inputmode="decimal"> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('edit-account-modal')">Cancel</button> <button type="submit" class="button primary">Update Account</button> </div> </form> </div> </div>
 
      <!-- Add/Edit Transaction Modals -->
-     <!-- Add Transaction Modal (Insert Type Dropdown Here) -->
      <div id="add-transaction-modal" class="modal">
         <div class="modal-content wide">
             <button class="close-button" onclick="closeModal('add-transaction-modal')" aria-label="Close">×</button>
@@ -259,7 +249,7 @@
                     <input type="date" id="trans-date" required>
                 </div>
 
-                <!-- ****** INSERT THIS NEW GROUP ****** -->
+
                 <div class="form-group">
                    <label for="trans-type">Type:</label>
                    <select id="trans-type" name="trans-type" required>
@@ -267,19 +257,19 @@
                        <option value="income">Income</option>
                    </select>
                 </div>
-                <!-- ****** END OF INSERTED GROUP ****** -->
+
 
                 <div class="form-group description-group">
                     <label for="trans-desc">Description:</label>
                     <input type="text" id="trans-desc" required maxlength="255">
                 </div>
 
-                <!-- ****** MODIFY THIS GROUP ****** -->
+
                 <div class="form-group amount-group">
-                    <label for="trans-amount">Amount:</label> <!-- Label updated -->
-                    <input type="text" id="trans-amount" placeholder="12.34" required inputmode="decimal"> <!-- Placeholder updated -->
+                    <label for="trans-amount">Amount:</label>
+                    <input type="text" id="trans-amount" placeholder="12.34" required inputmode="decimal">
                 </div>
-                <!-- ****** END OF MODIFIED GROUP ****** -->
+
 
                 <div class="form-group category-group">
                     <label for="trans-cat">Category:</label>
@@ -295,7 +285,7 @@
         </div>
     </div>
 
-    <!-- Edit Transaction Modal (Insert Type Dropdown Here) -->
+    <!-- Edit Transaction Modal -->
     <div id="edit-transaction-modal" class="modal">
         <div class="modal-content wide">
             <button class="close-button" onclick="closeModal('edit-transaction-modal')" aria-label="Close">×</button>
@@ -311,7 +301,7 @@
                     <input type="date" id="edit-trans-date" required>
                 </div>
 
-                 <!-- ****** INSERT THIS NEW GROUP ****** -->
+
                 <div class="form-group">
                    <label for="edit-trans-type">Type:</label>
                    <select id="edit-trans-type" name="edit-trans-type" required>
@@ -319,19 +309,19 @@
                        <option value="income">Income</option>
                    </select>
                 </div>
-                <!-- ****** END OF INSERTED GROUP ****** -->
+
 
                 <div class="form-group description-group">
                     <label for="edit-trans-desc">Description:</label>
                     <input type="text" id="edit-trans-desc" required maxlength="255">
                 </div>
 
-                <!-- ****** MODIFY THIS GROUP ****** -->
+
                 <div class="form-group amount-group">
-                    <label for="edit-trans-amount">Amount:</label> <!-- Label updated -->
-                    <input type="text" id="edit-trans-amount" placeholder="12.34" required inputmode="decimal"> <!-- Placeholder updated -->
+                    <label for="edit-trans-amount">Amount:</label> 
+                    <input type="text" id="edit-trans-amount" placeholder="12.34" required inputmode="decimal"> 
                 </div>
-                <!-- ****** END OF MODIFIED GROUP ****** -->
+
 
                 <div class="form-group category-group">
                     <label for="edit-trans-cat">Category:</label>
@@ -351,14 +341,10 @@
      <div id="edit-category-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('edit-category-modal')" aria-label="Close">×</button> <h3>Edit Category</h3> <form id="edit-category-form" novalidate> <input type="hidden" id="edit-cat-id"> <div class="form-group"> <label for="edit-cat-name">Category Name:</label> <input type="text" id="edit-cat-name" required maxlength="100"> </div> <div class="form-group"> <label for="edit-cat-type">Type:</label> <select id="edit-cat-type" required> <option value="expense">Expense</option> <option value="income">Income</option> </select> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('edit-category-modal')">Cancel</button> <button type="submit" class="button primary">Update Category</button> </div> </form> </div> </div>
 
 
-    <!-- JavaScript Dependencies -->
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
-    <!-- Chart.js (Add this) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Or link to local file: <script src="path/to/chart.min.js"></script> -->
 
-    <!-- Your Custom Script -->
     <script src="script.js"></script>
 </body>
 </html>
