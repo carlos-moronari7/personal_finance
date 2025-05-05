@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinancXpert</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <!-- Toastify CSS (Add this) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Or link to local file: <link rel="stylesheet" href="path/to/toastify.min.css"> -->
+
+    <!-- Your Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Basic styling for loading state */
+        .loading-overlay {
+            position: fixed; /* Cover the whole screen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Ensure it's on top */
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .loading-overlay.hidden {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Optional: Loading Overlay -->
+    <div id="loading-indicator" class="loading-overlay">
+        <span class="material-symbols-outlined" style="font-size: 2em; margin-right: 10px;">hourglass_top</span>
+        Loading Application...
+    </div>
+
+    <div class="app-container">
+        <!-- ==================== SIDEBAR ==================== -->
+        <nav class="sidebar">
+            <div class="logo-area">
+                <span class="material-symbols-outlined logo-icon">account_balance</span>
+                <h1>FinancXpert</h1>
+            </div>
+            <ul class="nav-list">
+                <li><button class="nav-button active" data-view="dashboard"> <span class="material-symbols-outlined nav-icon">dashboard</span> Dashboard </button></li>
+                <li><button class="nav-button" data-view="accounts"> <span class="material-symbols-outlined nav-icon">account_balance_wallet</span> Accounts </button></li>
+                <li><button class="nav-button" data-view="transactions"> <span class="material-symbols-outlined nav-icon">swap_horiz</span> Transactions </button></li>
+                <li><button class="nav-button" data-view="categories"> <span class="material-symbols-outlined nav-icon">category</span> Categories </button></li>
+                <li><button class="nav-button" data-view="budget"> <span class="material-symbols-outlined nav-icon">savings</span> Budget </button></li>
+                <li><button class="nav-button" data-view="reports"> <span class="material-symbols-outlined nav-icon">pie_chart</span> Reports </button></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <button class="nav-button" data-view="settings"> <span class="material-symbols-outlined nav-icon">settings</span> Settings </button>
+            </div>
+        </nav>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+            <!-- === DASHBOARD VIEW === -->
+            <div id="dashboard-view" class="view active-view">
+                 <div class="view-header dashboard-header"><h2>Dashboard</h2></div>
+                 <div class="metric-cards dashboard-metrics">
+                     <div class="card metric-card"> <span class="card-title">Total Net Balance</span> <span class="card-value large" id="db-total-balance">$0.00</span> </div>
+                     <div class="card metric-card"> <span class="card-title">Active Accounts</span> <span class="card-value large" id="db-account-count">0</span> </div>
+                     <div class="card metric-card placeholder"> <span class="card-title">Monthly Flow (WIP)</span> <span class="card-value" id="db-monthly-flow" style="font-size: 1.5rem; color: var(--text-tertiary);">--</span> </div>
+                 </div>
+                 <div class="list-cards dashboard-lists">
+                     <div class="card list-card">
+                         <h3 class="card-header">Account Balances</h3>
+                         <div class="scrollable-list account-summary-list" id="db-account-list"> <p class="placeholder-text">Loading accounts...</p> </div>
+                     </div>
+                     <div class="card list-card">
+                         <h3 class="card-header">Recent Activity</h3>
+                         <div class="scrollable-list recent-activity-list" id="db-recent-transactions"> <p class="placeholder-text">Loading transactions...</p> </div>
+                     </div>
+                 </div>
+             </div>
+
+            <!-- === ACCOUNTS VIEW === -->
+            <div id="accounts-view" class="view">
+                <div class="view-header">
+                    <h2>Manage Accounts</h2>
+                    <button id="add-account-btn" class="button primary"> <span class="material-symbols-outlined button-icon">add</span> Add Account </button>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="th col-name">Account Name</div>
+                        <div class="th col-balance">Current Balance</div>
+                        <div class="th col-actions">Actions</div>
+                    </div>
+                    <div class="table-body scrollable-list" id="accounts-table-body"> <p class="placeholder-text">Loading accounts...</p> </div>
+                </div>
+            </div>
+
+            <!-- === TRANSACTIONS VIEW === -->
+            <div id="transactions-view" class="view">
+                <div class="view-header">
+                    <h2>Transactions</h2>
+                    <button id="add-transaction-btn" class="button primary"> <span class="material-symbols-outlined button-icon">add</span> Add Transaction </button>
+                </div>
+                <div class="filter-bar">
+                    <label for="account-filter">Account:</label>
+                    <select id="account-filter"> <option value="null">All Accounts</option> </select>
+                    <!-- Add more filters later (date range, category, etc.) -->
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="th col-date">Date</div>
+                        <div class="th col-account">Account</div> <!-- Added Account column -->
+                        <div class="th col-desc">Description</div>
+                        <div class="th col-cat">Category</div>
+                        <div class="th col-amount">Amount</div>
+                        <div class="th col-actions">Actions</div>
+                    </div>
+                    <div class="table-body scrollable-list" id="transactions-table-body"> <p class="placeholder-text">Select an account or 'All Accounts'.</p> </div>
+                </div>
+            </div>
+
+            <!-- === CATEGORIES VIEW === -->
+             <div id="categories-view" class="view">
+                <div class="view-header">
+                    <h2>Manage Categories</h2>
+                    <button id="add-category-btn" class="button primary"> <span class="material-symbols-outlined button-icon">add</span> Add Category </button>
+                </div>
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="th col-cat-name">Category Name</div>
+                        <div class="th col-cat-type">Type</div>
+                        <div class="th col-actions">Actions</div>
+                    </div>
+                    <div class="table-body scrollable-list" id="categories-table-body"> <p class="placeholder-text">Loading categories...</p> </div>
+                </div>
+            </div>
+
+            <!-- === BUDGET VIEW === -->
+            <div id="budget-view" class="view">
+                 <div class="view-header">
+                     <h2>Budget Overview</h2>
+                     <div class="budget-month-selector">
+                         <label for="budget-month">Month:</label>
+                         <input type="month" id="budget-month"> <!-- YYYY-MM format -->
+                     </div>
+                 </div>
+                 <div class="table-container budget-table">
+                     <div class="table-header">
+                         <div class="th col-cat-name">Expense Category</div>
+                         <div class="th col-budgeted">Budgeted</div>
+                         <div class="th col-spent">Spent</div>
+                         <div class="th col-remaining">Remaining</div>
+                         <div class="th col-progress">Progress</div>
+                     </div>
+                     <div class="table-body scrollable-list" id="budget-table-body">
+                         <p class="placeholder-text">Select a month to view budget.</p>
+                     </div>
+                 </div>
+            </div>
+
+             <!-- === REPORTS VIEW === -->
+             <div id="reports-view" class="view">
+                <div class="view-header">
+                    <h2>Reports</h2>
+                    <div class="report-filters">
+                         <label for="report-start-date">From:</label>
+                         <input type="date" id="report-start-date">
+                         <label for="report-end-date">To:</label>
+                         <input type="date" id="report-end-date">
+                         <button id="run-report-btn" class="button primary small"> <span class="material-symbols-outlined button-icon small">refresh</span> Run Report</button>
+                    </div>
+                </div>
+                <div class="report-content">
+                    <div class="card report-card">
+                        <h3 class="card-header">Spending by Category</h3>
+                        <div class="chart-container" id="spending-chart-container">
+                            <!-- Canvas will be here, placeholder text initially -->
+                             <canvas id="spending-pie-chart" style="display: none;"></canvas>
+                             <p class="placeholder-text" id="report-placeholder">Select dates and run report.</p>
+                        </div>
+                    </div>
+                     <!-- Add more report cards here later -->
+                </div>
+            </div>
+
+<!-- === SETTINGS VIEW === -->
+<div id="settings-view" class="view">
+    <div class="view-header"><h2>Settings</h2></div>
+    <div class="settings-content">
+
+        <!-- Export Section -->
+        <section class="settings-section">
+            <h3>Export Data</h3>
+            <div class="settings-options export-options">
+                 <div class="form-group export-filename">
+                    <label for="export-filename">Filename Base:</label>
+                    <input type="text" id="export-filename" placeholder="e.g., finances_march">
+                 </div>
+                 <button id="export-xlsx-btn" class="button primary"> <span class="material-symbols-outlined button-icon">download</span> Export to Excel (.xlsx)</button>
+            </div>
+            <p class="settings-note">Exports Accounts, Transactions, and Categories to separate sheets in an Excel file.</p>
+        </section>
+
+        <!-- Theme Section -->
+        <section class="settings-section">
+            <h3>Appearance</h3>
+            <div class="settings-options theme-options">
+                <label for="theme-toggle" class="theme-toggle-label">Dark Mode:</label>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </section>
+
+         <!-- Data Management Section (Optional - kept placeholders) -->
+        <section class="settings-section">
+            <h3>Data Management (Future)</h3>
+            <div class="settings-options">
+                <button id="backup-db-btn" class="button disabled"> <span class="material-symbols-outlined button-icon">backup</span> Backup Database (WIP)</button>
+                <button id="restore-db-btn" class="button danger disabled"> <span class="material-symbols-outlined button-icon">restore</span> Restore Database (WIP)</button>
+            </div>
+            <p class="settings-note">Note: Restore will overwrite current data. Use with caution.</p>
+        </section>
+
+    </div>
+</div>
+
+        </main>
+    </div>
+
+     <!-- ==================== MODALS ==================== -->
+     <!-- Add/Edit Account Modals -->
+     <div id="add-account-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('add-account-modal')" aria-label="Close">×</button> <h3>Add New Account</h3> <form id="add-account-form" novalidate> <div class="form-group"> <label for="acc-name">Account Name:</label> <input type="text" id="acc-name" required maxlength="100"> </div> <div class="form-group"> <label for="acc-balance">Initial Balance:</label> <input type="text" id="acc-balance" placeholder="0.00" inputmode="decimal"> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('add-account-modal')">Cancel</button> <button type="submit" class="button primary">Save Account</button> </div> </form> </div> </div>
+     <div id="edit-account-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('edit-account-modal')" aria-label="Close">×</button> <h3>Edit Account</h3> <form id="edit-account-form" novalidate> <input type="hidden" id="edit-acc-id"> <div class="form-group"> <label for="edit-acc-name">Account Name:</label> <input type="text" id="edit-acc-name" required maxlength="100"> </div> <div class="form-group"> <label for="edit-acc-balance">Initial Balance:</label> <input type="text" id="edit-acc-balance" placeholder="0.00" inputmode="decimal"> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('edit-account-modal')">Cancel</button> <button type="submit" class="button primary">Update Account</button> </div> </form> </div> </div>
+
+     <!-- Add/Edit Transaction Modals -->
+     <!-- Add Transaction Modal (Insert Type Dropdown Here) -->
+     <div id="add-transaction-modal" class="modal">
+        <div class="modal-content wide">
+            <button class="close-button" onclick="closeModal('add-transaction-modal')" aria-label="Close">×</button>
+            <h3>Add New Transaction</h3>
+            <form id="add-transaction-form" novalidate>
+                <div class="form-group">
+                    <label for="trans-acc">Account:</label>
+                    <select id="trans-acc" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="trans-date">Date:</label>
+                    <input type="date" id="trans-date" required>
+                </div>
+
+                <!-- ****** INSERT THIS NEW GROUP ****** -->
+                <div class="form-group">
+                   <label for="trans-type">Type:</label>
+                   <select id="trans-type" name="trans-type" required>
+                       <option value="expense" selected>Expense</option>
+                       <option value="income">Income</option>
+                   </select>
+                </div>
+                <!-- ****** END OF INSERTED GROUP ****** -->
+
+                <div class="form-group description-group">
+                    <label for="trans-desc">Description:</label>
+                    <input type="text" id="trans-desc" required maxlength="255">
+                </div>
+
+                <!-- ****** MODIFY THIS GROUP ****** -->
+                <div class="form-group amount-group">
+                    <label for="trans-amount">Amount:</label> <!-- Label updated -->
+                    <input type="text" id="trans-amount" placeholder="12.34" required inputmode="decimal"> <!-- Placeholder updated -->
+                </div>
+                <!-- ****** END OF MODIFIED GROUP ****** -->
+
+                <div class="form-group category-group">
+                    <label for="trans-cat">Category:</label>
+                    <select id="trans-cat">
+                        <option value="">Uncategorized</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="button secondary" onclick="closeModal('add-transaction-modal')">Cancel</button>
+                    <button type="submit" class="button primary">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal (Insert Type Dropdown Here) -->
+    <div id="edit-transaction-modal" class="modal">
+        <div class="modal-content wide">
+            <button class="close-button" onclick="closeModal('edit-transaction-modal')" aria-label="Close">×</button>
+            <h3>Edit Transaction</h3>
+            <form id="edit-transaction-form" novalidate>
+                <input type="hidden" id="edit-trans-id">
+                <div class="form-group">
+                    <label for="edit-trans-acc">Account:</label>
+                    <select id="edit-trans-acc" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-trans-date">Date:</label>
+                    <input type="date" id="edit-trans-date" required>
+                </div>
+
+                 <!-- ****** INSERT THIS NEW GROUP ****** -->
+                <div class="form-group">
+                   <label for="edit-trans-type">Type:</label>
+                   <select id="edit-trans-type" name="edit-trans-type" required>
+                       <option value="expense" selected>Expense</option>
+                       <option value="income">Income</option>
+                   </select>
+                </div>
+                <!-- ****** END OF INSERTED GROUP ****** -->
+
+                <div class="form-group description-group">
+                    <label for="edit-trans-desc">Description:</label>
+                    <input type="text" id="edit-trans-desc" required maxlength="255">
+                </div>
+
+                <!-- ****** MODIFY THIS GROUP ****** -->
+                <div class="form-group amount-group">
+                    <label for="edit-trans-amount">Amount:</label> <!-- Label updated -->
+                    <input type="text" id="edit-trans-amount" placeholder="12.34" required inputmode="decimal"> <!-- Placeholder updated -->
+                </div>
+                <!-- ****** END OF MODIFIED GROUP ****** -->
+
+                <div class="form-group category-group">
+                    <label for="edit-trans-cat">Category:</label>
+                    <select id="edit-trans-cat">
+                        <option value="">Uncategorized</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="button secondary" onclick="closeModal('edit-transaction-modal')">Cancel</button>
+                    <button type="submit" class="button primary">Update Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+     <!-- Add/Edit Category Modals -->
+     <div id="add-category-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('add-category-modal')" aria-label="Close">×</button> <h3>Add New Category</h3> <form id="add-category-form" novalidate> <div class="form-group"> <label for="cat-name">Category Name:</label> <input type="text" id="cat-name" required maxlength="100"> </div> <div class="form-group"> <label for="cat-type">Type:</label> <select id="cat-type" required> <option value="expense" selected>Expense</option> <option value="income">Income</option> </select> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('add-category-modal')">Cancel</button> <button type="submit" class="button primary">Save Category</button> </div> </form> </div> </div>
+     <div id="edit-category-modal" class="modal"> <div class="modal-content"> <button class="close-button" onclick="closeModal('edit-category-modal')" aria-label="Close">×</button> <h3>Edit Category</h3> <form id="edit-category-form" novalidate> <input type="hidden" id="edit-cat-id"> <div class="form-group"> <label for="edit-cat-name">Category Name:</label> <input type="text" id="edit-cat-name" required maxlength="100"> </div> <div class="form-group"> <label for="edit-cat-type">Type:</label> <select id="edit-cat-type" required> <option value="expense">Expense</option> <option value="income">Income</option> </select> </div> <div class="form-actions"> <button type="button" class="button secondary" onclick="closeModal('edit-category-modal')">Cancel</button> <button type="submit" class="button primary">Update Category</button> </div> </form> </div> </div>
+
+
+    <!-- JavaScript Dependencies -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- Chart.js (Add this) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Or link to local file: <script src="path/to/chart.min.js"></script> -->
+
+    <!-- Your Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
