@@ -380,7 +380,7 @@ if __name__ == '__main__':
     def on_shown(): logging.info("Event: WebView shown.")
 
     window = webview.create_window(
-        'FinancXpert',
+        'Personal Finance v1.0',
         html_file_uri,
         js_api=api_instance, # Pass the instance here
         width=1280, height=800, resizable=True, min_size=(1000, 650), confirm_close=False
